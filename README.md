@@ -1,8 +1,8 @@
 # CountdownDay 倒数日
 
-一款离线优先的 Android 倒数日应用：Kotlin + Jetpack Compose（Material 3）+ Room + WorkManager + AlarmManager，支持自定义账号的加密云同步与桌面小组件。
+一款纯本地的 Android 倒数日应用：Kotlin + Jetpack Compose（Material 3）+ Room + WorkManager + AlarmManager，支持桌面小组件。**无任何网络权限，数据 100% 保存在本机。**
 
-[![Release](https://img.shields.io/badge/version-10.2-blue)]() [![Min SDK](https://img.shields.io/badge/minSdk-24-green)]() [![Target SDK](https://img.shields.io/badge/targetSdk-34-green)]() [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)]()
+[![Release](https://img.shields.io/badge/version-10.3-blue)]() [![Min SDK](https://img.shields.io/badge/minSdk-24-green)]() [![Target SDK](https://img.shields.io/badge/targetSdk-34-green)]() [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)]()
 
 ## 功能特性
 
@@ -11,20 +11,23 @@
 - **重复事件**：每年/每月到期后自动推进到下一周期并重排闹钟
 - **滑动删除 + 撤销**：SwipeToDismiss + Snackbar 撤销恢复
 - **桌面小组件**：显示最近事件倒计时，按事件主题色渲染
-- **加密云同步（离线优先）**：零信任设计——密码不出设备，PBKDF2（40000 轮）派生 AES-256-GCM 密钥加密整包数据后同步；离线修改自动排队，联网后 WorkManager 补传；多设备按 UUID + 时间戳新者胜合并
 - **JSON 导出**：通过系统 SAF 保存对话框导出全部事件
 - **个性化**：深色模式（跟随系统/浅色/深色）、动态取色开关、主题色
-- **空状态/通知权限/电池优化引导**：全套细节体验
+- **数据迁移**：旧版 SharedPreferences 数据自动导入；Room 结构升级全自动迁移
+
+## 隐私
+
+- 应用**没有 INTERNET 权限**，不可能发送任何数据到网络
+- 全部数据存储在应用私有目录的 Room 数据库中，卸载即清除
 
 ## 技术栈
 
 | 层 | 技术 |
 |---|---|
-| UI | Jetpack Compose + Material 3（动态取色）+ Navigation Compose |
-| 架构 | MVVM + Repository（StateFlow 单向数据流） |
-| 数据 | Room（v5，含 4 段自动迁移） |
-| 后台 | WorkManager（同步/每日提醒兜底）+ AlarmManager（精准提醒） |
-| 云端 | textdb.online 免费匿名 KV（国内可直连）+ AES-GCM 端侧加密 |
+| UI | Jetpack Compose + Material 3（动态取色）|
+| 架构 | MVVM + Repository（StateFlow 单向数据流）|
+| 数据 | Room（v5，含 4 段自动迁移）|
+| 后台 | WorkManager（每日提醒兜底）+ AlarmManager（精准提醒）|
 | 构建 | Gradle 8.9 / AGP 8.5.2 / Kotlin 2.0.20 / KSP / R8 |
 
 ## 构建
@@ -42,21 +45,6 @@
 ```
 
 要求：JDK 17+，Android SDK Platform 34。
-
-## 架构说明
-
-```
-UI (Compose) → EventViewModel (StateFlow<UiState>) → EventRepository → Room (SQLite)
-                                                      ↘ SyncWorker (WorkManager, 网络约束)
-                                                          ↘ SyncEngine → CloudStore (AES-GCM) → textdb.online
-提醒链路：AlarmScheduler → AlarmManager (exact) → AlarmReceiver → 通知 + 周期推进 → BootReceiver 重排
-```
-
-## 隐私与安全
-
-- 云端只存密文：服务器无法读取任何事件内容；密码永不离开设备
-- 忘记密码 = 云端数据无法解密（本地数据不受影响）；账号无找回机制，请牢记密码
-- 签名 keystore 与 `keystore.properties` 不在仓库中，请自行生成并妥善保存
 
 ## License
 

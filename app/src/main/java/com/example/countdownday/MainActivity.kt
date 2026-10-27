@@ -87,8 +87,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.horizontalScroll
@@ -116,40 +114,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CountdownTheme {
-                AppNavGraph()
+                CountdownApp()
             }
-        }
-    }
-}
-
-/** 路由：auth ↔ home；启动时按当前登录态决定起点 */
-@Composable
-fun AppNavGraph() {
-    val navController = androidx.navigation.compose.rememberNavController()
-    val context = LocalContext.current
-    val start = if (SessionManager.get(context).account != null) "home" else "auth"
-
-    androidx.navigation.compose.NavHost(
-        navController = navController,
-        startDestination = start
-    ) {
-        composable("auth") {
-            AuthScreen(
-                onSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("auth") { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable("home") {
-            CountdownApp(
-                onSignedOut = {
-                    navController.navigate("auth") {
-                        popUpTo("home") { inclusive = true }
-                    }
-                }
-            )
         }
     }
 }
@@ -186,7 +152,7 @@ fun CountdownTheme(content: @Composable () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CountdownApp(vm: EventViewModel = viewModel(), onSignedOut: () -> Unit = {}) {
+fun CountdownApp(vm: EventViewModel = viewModel()) {
     val state by vm.uiState.collectAsState()
     val showAddDialog = remember { mutableStateOf(false) }
     val editTarget = remember { mutableStateOf<UiEvent?>(null) }
@@ -339,19 +305,6 @@ fun CountdownApp(vm: EventViewModel = viewModel(), onSignedOut: () -> Unit = {})
                 showSettings.value = false
                 openExactAlarmSettings(context)
             },
-            onSignOut = {
-                showSettings.value = false
-                // 登出：清会话、清本地库（重新登录后从云端全量拉回）、停周期同步
-                AuthRepository().signOut()
-                SessionManager.clear(context)
-                SyncWorker.cancelPeriodicSync(context)
-                scope.launch {
-                    AppDatabase.get(context).eventDao().deleteAll()
-                    AlarmScheduler.rescheduleAll(context)
-                    WidgetUpdater.updateAll(context)
-                }
-                onSignedOut()
-            }
         )
     }
 }
@@ -399,14 +352,10 @@ fun SettingsDialog(
     onDismiss: () -> Unit,
     onOpenBattery: () -> Unit,
     onOpenExactAlarm: () -> Unit,
-    onSignOut: () -> Unit,
     onAppearanceChanged: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val exactGranted = remember { AlarmScheduler.canScheduleExact(context) }
-    val session = remember { SessionManager.get(context) }
-    val signedIn = session.account != null
-    val accountName = session.account ?: ""
     val appearance = remember { AppearancePrefs.get(context) }
     val dynamicSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
@@ -485,14 +434,6 @@ fun SettingsDialog(
                 Spacer(Modifier.height(12.dp))
                 androidx.compose.material3.HorizontalDivider()
                 Spacer(Modifier.height(8.dp))
-                if (signedIn) {
-                    Text(
-                        "已登录：$accountName",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -540,15 +481,6 @@ fun SettingsDialog(
                                 else MaterialTheme.colorScheme.error
                             )
                         }
-                    }
-                }
-                if (signedIn) {
-                    Spacer(Modifier.height(4.dp))
-                    TextButton(
-                        onClick = onSignOut,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("退出登录", color = MaterialTheme.colorScheme.error)
                     }
                 }
             }

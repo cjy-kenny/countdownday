@@ -83,7 +83,6 @@ class EventViewModel(app: Application) : AndroidViewModel(app) {
             if (reminder) {
                 ReminderScheduler.scheduleSameDayCatchUp(getApplication(), dateMillis, reminderMinutes)
             }
-            SyncWorker.requestSync(getApplication())
         }
     }
 
@@ -97,7 +96,6 @@ class EventViewModel(app: Application) : AndroidViewModel(app) {
             if (reminder) {
                 ReminderScheduler.scheduleSameDayCatchUp(getApplication(), dateMillis, reminderMinutes)
             }
-            SyncWorker.requestSync(getApplication())
         }
     }
 
@@ -107,7 +105,6 @@ class EventViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             repository.delete(event.id)
             AlarmScheduler.rescheduleAll(getApplication())
-            SyncWorker.requestSync(getApplication())
         }
     }
 
@@ -117,7 +114,6 @@ class EventViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             repository.restore(snapshot)
             AlarmScheduler.rescheduleAll(getApplication())
-            SyncWorker.requestSync(getApplication())
         }
     }
 

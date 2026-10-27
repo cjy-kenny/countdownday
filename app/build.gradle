@@ -13,8 +13,8 @@ android {
         applicationId "com.example.countdownday"
         minSdk 24
         targetSdk 34
-        versionCode 13
-        versionName "10.2"
+        versionCode 14
+        versionName "10.3"
     }
 
     // 签名信息从环境变量或 keystore.properties 读取（均不入库）；

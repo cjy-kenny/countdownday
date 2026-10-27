@@ -12,7 +12,7 @@ object Migration {
 
     /**
      * v1 版本把单个目标日期存在 SharedPreferences（countdown_prefs / target_millis）。
-     * 升级到 v3 后首启动时：若有该数据且 Room 还没迁过，就把"我的倒数日"
+     * 首启动时：若有该数据且 Room 还没迁过，就把"我的倒数日"
      * 作为一个事件写入 Room，然后打上迁移标记（标记存同一 prefs，避免重复导入）。
      */
     fun migrateV1PrefsIfNeeded(context: Context) {

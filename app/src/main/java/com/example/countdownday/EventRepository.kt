@@ -9,8 +9,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * 数据仓库层：本地 Room 为唯一事实来源（离线优先），写入打待同步标记，
- * 云端同步由 SyncWorker 异步完成。
+ * 数据仓库层：本地 Room 为唯一事实来源。
  */
 class EventRepository(private val dao: CountdownEventDao) {
 
