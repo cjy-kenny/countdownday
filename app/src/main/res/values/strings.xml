@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">倒数日</string>
+
+    <!-- 启动页主题：Android 12+ 由系统 SplashScreen API 接管（用图标出屏）；低版本由 compat 库绘制 -->
+    <style name="Theme.CountdownDay.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1E88E5</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

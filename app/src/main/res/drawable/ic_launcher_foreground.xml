@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group>
+        <!-- 白色日历卡体（居中 54x54 区域） -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M33,38 h42 a4,4 0 0 1 4,4 v32 a4,4 0 0 1 -4,4 h-42 a4,4 0 0 1 -4,-4 v-32 a4,4 0 0 1 4,-4 z" />
+        <!-- 顶部日历环 -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="5"
+            android:strokeLineCap="round"
+            android:pathData="M42,31 v10 M66,31 v10" />
+        <!-- 蓝色分隔线 -->
+        <path
+            android:strokeColor="#1E88E5"
+            android:strokeWidth="3"
+            android:pathData="M29,50 h50" />
+        <!-- 蓝色沙漏（倒计时符号） -->
+        <path
+            android:fillColor="#1E88E5"
+            android:pathData="M44,56 L64,56 L44,74 L64,74 Z M46.5,57.5 L61.5,57.5 L61.5,58.8 L46.5,58.8 Z M46.5,72.2 L61.5,72.2 L61.5,73.5 L46.5,73.5 Z" />
+    </group>
+</vector>
